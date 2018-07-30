@@ -16,7 +16,8 @@
 
 #### 基本内容实现
 ##### 协议原理
-IOS 采用自定义schema 协议，android 采用js注入方式
+IOS 采用自定义schema 协议，android 采用js注入方式。
+
 （1）native/js 通信机制
 对于 Android调用JS代码 的方法有2种：
 
@@ -125,5 +126,6 @@ Application注册registerActivityLifecycleCallbacks监听activity的生命周期
 5. 缓存优化
 
 
+#### 参考
 [https://www.jianshu.com/p/b9164500d3fb](https://www.jianshu.com/p/b9164500d3fb)
 [https://www.cnblogs.com/yexiaochai/p/4921635.html](https://www.cnblogs.com/yexiaochai/p/4921635.html) 
