@@ -11,7 +11,8 @@
 
 
 #### 理解定义
-**一种交互协议**，完善前端和native沟通，可以理解为以前只知道native可以调用js，js也可以调用native，我们在这个基础上定义协议，实现我要你做什么，你做了再返回我，反之亦然。有点像http协议，native可以当作是前端的后台。这样可以达到前端接管native绝大部分功能实现，IOS和android共用一套前端和协议，利用native和h5各有的优势，优点也就体现出来。
+hybrid可以是**一种交互协议**，完善前端和native沟通，可以理解为以前只知道native可以调用js，js也可以调用native，我们在这个基础上定义协议，实现我要你做什么，你做了再返回我，反之亦然。有点像http协议，native可以当作是前端的后台。这样可以达到前端接管native绝大部分功能实现，IOS和android共用一套前端和协议，利用native和h5各有的优势，优点也就体现出来。
+
 总结：基于webView前端和native的一种交互协议，
 
 #### 基本内容实现
@@ -30,7 +31,7 @@ IOS 采用自定义schema 协议，android 采用js注入方式。
 - 通过 WebViewClient 的shouldOverrideUrlLoading ()方法回调拦截 url
 - 通过 WebChromeClient 的onJsAlert()、onJsConfirm()、onJsPrompt（）方法回调拦截JS对话框alert()、confirm()、prompt（） 消息
 
-**注意**：方法1会有安全隐患，在Android4.2js可以通过反射得到Runtime对象,执行命令。 Runtime.getRuntime().exec("exefile")。  但是实际4.2版本的手机很少了，可以忽略。
+**注意**：addJavascriptInterface会有安全隐患，在Android4.2js可以通过反射得到Runtime对象,执行命令。 Runtime.getRuntime().exec("exefile")。  但是实际4.2版本的手机很少了可以忽略。
 
 ##### 通信协议
 1、native/js 通信协议
