@@ -1,7 +1,7 @@
 # java集合
 
 #### 出现的意义
-##涉及到的数据结构：
+## 涉及到的数据结构：
 1、Array
 特点：大小固定， 扩展的话可以新建大的把小的copy进去。
 优点：方便访问和修改。
@@ -34,14 +34,14 @@
 优点：
 
 
-###集合图
+### 集合图
 
 ![687474703a2f2f696d672e626c6f672e6373646e2e6e65742f3230313430363238313434323035363235.jpeg](http://upload-images.jianshu.io/upload_images/3162050-1c9685e2459d6b17.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 集合实现类的特征由数据结构特征决定。
 基本结构：接口－》aabstract类－》具体实现
-###Collection
-####list
+### Collection
+#### list
 有序，可以重复（角标操作）
 1、ArrayList
 底层由数组实现，当超过数组大小，新建复制。
@@ -49,15 +49,15 @@
 2、LinkedList
 底层由链表实现，实现了Queue接口，可以用作队列。
 
-####set
+#### set
 没有重复数据
 1、HashSet
 底层由HashMap实现，无序。
 2、TreeSet
 底层由TreeMap实现，有序。
-####queue
+#### queue
 可以用LinkedList实现，
-###Map
+### Map
 键值对，key值不能重复，
 1、HashMap
 高效：hashCode的实现可以直接通过hash值找到对应的value，在查询上效率很高。底层是用数组实现，数组中的元素包含的字段（value，key，next，hash）
@@ -67,7 +67,7 @@
 排序，通过key值排序。
 4、HashTable
 和hashMap对比，很多是同步方法。
-###使用指南
+### 使用指南
 
 ![image.png](http://upload-images.jianshu.io/upload_images/3162050-4533ecaf566e7436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
