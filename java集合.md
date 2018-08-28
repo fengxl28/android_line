@@ -1,6 +1,8 @@
 # java集合
 
 #### 出现的意义
+集合的不同特性取决于它的底层实现的数据结构
+
 ## 涉及到的数据结构：
 1、Array
 特点：大小固定， 扩展的话可以新建大的把小的copy进去。
@@ -10,6 +12,7 @@
 2、Linked
 
 ![20141212083619402.png](http://upload-images.jianshu.io/upload_images/3162050-1c8f8f7c849abaea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 特点：一个节点里面包含了数据和下一个节点的指向，非连续，非顺序
 优点：方便插入，删除。 
 缺点： 查找慢。
@@ -17,12 +20,14 @@
 3、Queue
 
 ![2243690-3116f05bb106b789.png](http://upload-images.jianshu.io/upload_images/3162050-b4eee82bc18544a1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 特点：只能在头尾删除增加，先进先出
 优点：普通队列，优先队列
 
 4、Stack
 
 ![2243690-2e9540a7b4b61cbd.png](http://upload-images.jianshu.io/upload_images/3162050-86f4c8aeec8519ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 区分：heap，stack
 特点：只能在栈顶操作，先进后出
 优点：
