@@ -21,3 +21,21 @@ LinkedHashMap是由数组+双向链表的数据结构来实现的。其中双向
 
 应用：
 Android中的三级缓存。
+
+
+
+#### ConstraintLayout
+
+相对定位：constraint
+边距：margin
+连接到GONE小部件时的边距:goneMargin(订单详情可以用用)
+居中定位
+偏差：constraintHorizontal_bias
+循环定位：Circle
+尺寸限制ConstraintLayout上的最小尺寸：min、max
+使用0dp，相当于“ MATCH_CONSTRAINT”
+防止约束失效:app:layout_constrainedWidth=”true” ,app:layout_constrainedHeight=”true”
+链:
+
+注意：您不能在约束中具有循环依赖关系。
+
