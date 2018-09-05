@@ -37,7 +37,8 @@ map 操作符：
 联通靠：Observable.subscribe,1、包装Observer（装饰者），2、调用Observer的onSubscribe, 3、ObservableOnSubscribe中间枢纽工作，开始调用Observer的方法，传数据（中间键）。
 列子：顾客去饭店吃饭。（饭店，厨子，服务员，顾客）
 
-流线图：https://upload-images.jianshu.io/upload_images/5305830-5de7b5e046e10b91.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700
+流线图：
+![hahah](./image/android/rxjava1.png)
 
 总结：
 
