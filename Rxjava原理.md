@@ -52,3 +52,8 @@ Rx流程：将它封装进runnable，传入线程调度器。
 
 （3）ObserverOn
 ObserveOn会用一个queue保存上一级传下来的数据，然后通过scheduler创建一个worker，提交数据，并将任务执行在worker设置的线程中
+
+
+
+http://rkhcy.github.io/2017/12/13/%E5%9B%BE%E8%A7%A3RxJava2(%E4%B8%80)/#more
+
