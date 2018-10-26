@@ -85,7 +85,9 @@ Android中许多组件类（如Activity、Service等）是需要在Manifest文�
 - 插件APK里的Activity的生命周期处理；
 - 插件APK里的R资源加载使用；
 
-方案1、绕行方案：Fragment代替Activity，这样可以最大限度得避开“无法注册新组件的限制”。 使用代码动态布局View代替XML文件。
+方案1、绕行方案
+
+Fragment代替Activity，这样可以最大限度得避开“无法注册新组件的限制”。 使用代码动态布局View代替XML文件。
 
 方案2、代理Activity 
 
@@ -114,12 +116,11 @@ protected void loadResources() {
 开源框架[dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk)
 
 方案3、动态创建Activity 
+
 往往不是所有的apk都可作为插件被加载
 运行时创建一个编译好并能运行的类叫做“动态字节码操作
 
 开源框架[android-pluginmgr](https://github.com/houkx/android-pluginmgr/)
-
-
 
 
 #### 实际应用
@@ -129,14 +130,16 @@ protected void loadResources() {
 2. 有些应用角色不需要部分功能模块（这部分占用内存、性能高），可以作为插件。
 3. 业务上不需要加载Android组件、资源文件。
 4. 可以动态发布。
-5. 组里老大喜欢研究技术造轮子。
 
-开始自己画～～～
+记录一些小细节～～～
 
+- 插件APK的管理后台：服务器后台apk包管理
+- 插件APK合法性校验：Android 提供API获取未安装APK的一些基本信息（PackageManager.getPackageArchiveInfo(String archiveFilePath, int flags)
 
-热部署‘
-插件APK合法性校验
-插件APK的管理后台
+- 版本控制：根据未安装APK的版本号和当前版本号对比。
+- 加载apk中的java文件：继承DexClassLoader类重写loadClass。
+- 加载apk中的资源文件：AssetManager类 addAssetPath方法。
+- 插件apk中的方法调用：反射。
 
 
 
@@ -153,6 +156,11 @@ protected void loadResources() {
 3、NDK 与 JNI ， 加载so库：System.load("so文件");
 ![hahah](./image/android/jniandndk.png)
 
+
+# Android 9.0 谷歌将开始限制非SDK的接口
+插件化 里面涉及到的非SDK的接口很多， 反官方的东西后面不好走了。
+如：加载资源 AssetManager 类 addAssetPath。  反射使用等。
+
 #### 参考：
 
 https://www.jianshu.com/p/704cac3eb13d
@@ -163,3 +171,5 @@ http://lruheng.com/2017/07/01/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E5%85%A5%E9%97%
 https://tech.meituan.com/android_hydra.html
 
 https://segmentfault.com/a/1190000004062866
+
+https://mp.weixin.qq.com/s/Uwr6Rimc7Gpnq4wMFZSAag?utm_source=androidweekly&utm_medium=website
