@@ -31,7 +31,7 @@
 
 
 #### 核心内容
-- 类加载器：
+##### 1、类加载器
 虚拟机通过ClassLoader加载Jar文件并执行里面的代码，Android应用类似于Java程序，虚拟机换成了Dalvik/ART，而Jar换成了Dex，Android中大体两类
 
 1. DexClassLoader可以加载jar/apk/dex，可以从SD卡中加载未安装的apk；
@@ -75,24 +75,52 @@ protected Class<?> loadClass(String className, boolean resolve) throws ClassNotF
 - 加载成功后方法调用：
    1、反射， 2、接口（维护一套公共接口，类型转换）
 
-- 难点
+##### 2、加载Android组件Activity
+难点：
 
-1、Android中许多组件类（如Activity、Service等）是需要在Manifest文件里面注册后才能工作的（系统会检查该组件有没有注册），所以即使动态加载了一个新的组件类进来，没有注册的话还是无法工作；
+Android中许多组件类（如Activity、Service等）是需要在Manifest文件里面注册后才能工作的（系统会检查该组件有没有注册），所以即使动态加载了一个新的组件类进来，没有注册的话还是无法工作。Res资源是Android开发中经常用到的，而Android是把这些资源用对应的R.id注册好，运行时通过这些ID从Resource实例中获取对应的资源。如果是运行时动态加载进来的新类，那类里面用到R.id的地方将会抛出找不到资源或者用错资源的异常，因为新类的资源ID根本和现有的Resource实例中保存的资源ID对不上；
 
-2、Res资源是Android开发中经常用到的，而Android是把这些资源用对应的R.id注册好，运行时通过这些ID从Resource实例中获取对应的资源。如果是运行时动态加载进来的新类，那类里面用到R.id的地方将会抛出找不到资源或者用错资源的异常，因为新类的资源ID根本和现有的Resource实例中保存的资源ID对不上；
+问题总结：
 
-#### 扩展
-加载Android组件
-绕行方案：Fragment代替Activity，这样可以最大限度得避开“无法注册新组件的限制”。
+- 插件APK里的Activity的生命周期处理；
+- 插件APK里的R资源加载使用；
 
-代理Activity ：https://segmentfault.com/a/1190000004062972
-动态创建Activity ： https://segmentfault.com/a/1190000004077469
+方案1、绕行方案：Fragment代替Activity，这样可以最大限度得避开“无法注册新组件的限制”。 使用代码动态布局View代替XML文件。
 
-ClassLoader的动态加载技术（除了加载SO库外），使用ClassLoader的一个特点就是，如果程序不重新启动，加载过一次的类就无法重新加载。因此，如果使用ClassLoader来动态升级APP或者动态修复BUG，都需要重新启动APP才能生效。
+方案2、代理Activity 
 
-除了使用ClassLoader外，还可以使用jni hook的方式修改程序的执行代码。前者是在虚拟机上操作的，而后者做的已经是Native层级的工作了，直接修改应用运行时的内存地址，所以使用jni hook的方式时，不用重新应用就能生效。
+原理：主项目APK注册一个代理Activity（命名为ProxyActivity），ProxyActivity是一个普通的Activity，但只是一个空壳，自身并没有什么业务逻辑。每次打开插件APK里的某一个Activity的时候，都是在主项目里使用标准的方式启动ProxyActivity，再在ProxyActivity的生命周期里同步调用插件中的Activity实例的生命周期方法，从而执行插件APK的业务逻辑。  ProxyActivity + 没注册的Activity = 标准的Activity
 
-加载so库：System.load("so文件");
+AssetManager中的addAssetPath方法，我们可以将一个apk中的资源加载到Resources中，由于addAssetPath是隐藏api我们无法直接调用，所以只能通过反射，下面是它的声明，通过注释我们可以看出，传递的路径可以是zip文件也可以是一个资源目录，而apk就是一个zip，所以直接将apk的路径传给它，资源就加载到AssetManager中了，然后再通过AssetManager来创建一个新的Resources对象，这个对象就是我们可以使用的apk中的资源了，这样我们的问题就解决了。
+
+```
+protected void loadResources() {  
+    try {  
+        AssetManager assetManager = AssetManager.class.newInstance();  
+        Method addAssetPath = assetManager.getClass().getMethod("addAssetPath", String.class);  
+        addAssetPath.invoke(assetManager, mDexPath);  
+        mAssetManager = assetManager;  
+    } catch (Exception e) {  
+        e.printStackTrace();  
+    }  
+    Resources superRes = super.getResources();  
+    mResources = new Resources(mAssetManager, superRes.getDisplayMetrics(),  
+            superRes.getConfiguration());  
+    mTheme = mResources.newTheme();  
+    mTheme.setTo(super.getTheme());  
+}
+```
+
+开源框架[dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk)
+
+方案3、动态创建Activity 
+往往不是所有的apk都可作为插件被加载
+运行时创建一个编译好并能运行的类叫做“动态字节码操作
+
+开源框架[android-pluginmgr](https://github.com/houkx/android-pluginmgr/)
+
+
+
 
 #### 实际应用
 业务场景：
@@ -106,12 +134,10 @@ ClassLoader的动态加载技术（除了加载SO库外），使用ClassLoader�
 开始自己画～～～
 
 
+热部署‘
+插件APK合法性校验
+插件APK的管理后台
 
-
-
-#### 开源框架学习：
-Dynamic-load-apk
-DroidPlugin
 
 
 #### 积累点
@@ -120,7 +146,11 @@ DroidPlugin
 
 2、一个Android程序和标准的Java程序最大的区别就在于他们的上下文环境（Context）不同。Android中，这个环境可以给程序提供组件需要用到的功能，也可以提供一些主题、Res等资源
 
-3、NDK 与 JNI
+3、ClassLoader的动态加载技术（除了加载SO库外），使用ClassLoader的一个特点就是，如果程序不重新启动，加载过一次的类就无法重新加载。因此，如果使用ClassLoader来动态升级APP或者动态修复BUG，都需要重新启动APP才能生效。
+
+4、除了使用ClassLoader外，还可以使用jni hook的方式修改程序的执行代码。前者是在虚拟机上操作的，而后者做的已经是Native层级的工作了，直接修改应用运行时的内存地址，所以使用jni hook的方式时，不用重新应用就能生效。
+
+3、NDK 与 JNI ， 加载so库：System.load("so文件");
 ![hahah](./image/android/jniandndk.png)
 
 #### 参考：
