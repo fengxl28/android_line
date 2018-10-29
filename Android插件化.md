@@ -6,6 +6,11 @@
 插件化|实现功能模块独立出来加载|相对简单
 热修复|修复bug|实现复杂
 
+#### 技术发展：
+技术|实现|难易度
+---|:--:|---:
+第一代|代理|相对简单
+第二代|Hook系统服务|实现复杂
 
 #### 含义：
 不必再像原来一样把所有的内容都放在一个apk中，分为宿主apk、插件apk。
@@ -40,7 +45,7 @@
 它们都继承与BaseDexClassLoader，里面核心加载类的过程代码
 
 ```
-//加载类到内存流程上，先去当前的加载器找是否加载过，再去父加载器查找，最后再到子加载器找。
+//加载类到内存流程上：先查看自身是否已经加载过该类，如果没有加载过会首先让父加载器去加载，如果父加载器无法加载该类时才会调用自身的findClass方法加载，该机制很大程度上避免了类的重复加载。
 
 protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
         Class<?> clazz = findLoadedClass(className);
@@ -75,7 +80,7 @@ protected Class<?> loadClass(String className, boolean resolve) throws ClassNotF
 - 加载成功后方法调用：
    1、反射， 2、接口（维护一套公共接口，类型转换）
 
-##### 2、加载Android组件Activity
+##### 2、加载Android组件，资源
 难点：
 
 Android中许多组件类（如Activity、Service等）是需要在Manifest文件里面注册后才能工作的（系统会检查该组件有没有注册），所以即使动态加载了一个新的组件类进来，没有注册的话还是无法工作。Res资源是Android开发中经常用到的，而Android是把这些资源用对应的R.id注册好，运行时通过这些ID从Resource实例中获取对应的资源。如果是运行时动态加载进来的新类，那类里面用到R.id的地方将会抛出找不到资源或者用错资源的异常，因为新类的资源ID根本和现有的Resource实例中保存的资源ID对不上；
@@ -113,15 +118,32 @@ protected void loadResources() {
 }
 ```
 
+![hahah](./image/android/插件化2.png)
+
+缺点：
+
+- 插件中的Activity必须继承PluginActivity，开发侵入性强。
+- 如果想支持Activity的singleTask，singleInstance等launchMode时，需要自己管理Activity栈，实现起来很繁琐。
+- 插件中需要小心处理Context，容易出错。
+- 如果想把之前的模块改造成插件需要很多额外的工作。
+
 开源框架[dynamic-load-apk](https://github.com/singwhatiwanna/dynamic-load-apk)
 
-方案3、动态创建Activity 
+方案3、Hook 
 
-往往不是所有的apk都可作为插件被加载
-运行时创建一个编译好并能运行的类叫做“动态字节码操作
+简单的思路：在系统启动Android组件的流程上hook替换系统实现，以下是activity启动流行：
 
-开源框架[android-pluginmgr](https://github.com/houkx/android-pluginmgr/)
+![hahah](./image/android/插件化3.png)
 
+1. 先在Manifest中预埋StubActivity，启动时hook上图第1步，将Intent替换成StubActivity。
+2. hook第10步，通过插件的ClassLoader反射创建插件Activity
+3. 之后Activity的所有生命周期回调都会通知给插件Activity
+
+开源框架[VirtualAPK](https://github.com/didi/VirtualAPK)
+
+方案4、App沙箱环境 
+
+在应用层构建了一个虚拟的app运行环境，实现了免安装运行apk，应用双开等黑科技。
 
 #### 实际应用
 业务场景：
@@ -163,13 +185,10 @@ protected void loadResources() {
 
 #### 参考：
 
-https://www.jianshu.com/p/704cac3eb13d
-
-
-http://lruheng.com/2017/07/01/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/
-
-https://tech.meituan.com/android_hydra.html
-
 https://segmentfault.com/a/1190000004062866
 
 https://mp.weixin.qq.com/s/Uwr6Rimc7Gpnq4wMFZSAag?utm_source=androidweekly&utm_medium=website
+
+https://www.jianshu.com/p/704cac3eb13d
+
+http://lruheng.com/2017/07/01/Android%E6%8F%92%E4%BB%B6%E5%8C%96%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/
