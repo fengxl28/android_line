@@ -41,7 +41,7 @@
 
 ### 集合图
 
-![687474703a2f2f696d672e626c6f672e6373646e2e6e65742f3230313430363238313434323035363235.jpeg](http://upload-images.jianshu.io/upload_images/3162050-1c9685e2459d6b17.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![hahah](./image/android/list.png)
 
 集合实现类的特征由数据结构特征决定。
 基本结构：接口－》aabstract类－》具体实现
